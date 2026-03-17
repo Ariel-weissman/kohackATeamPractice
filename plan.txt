@@ -1,0 +1,15 @@
+Front
+- Index
+- Signup
+- Login
+- Sell/Buy
+    - 2 forms on one page. See if we can figure it out
+- List buys and sells
+
+Back
+- user class
+- transaction class
+- jinja templates
+- SQL
+    - Ariel sets up
+- API 
