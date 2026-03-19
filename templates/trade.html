@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
   <body>
+    <h1>Welcome, {{ user.username }}!</h1>
     <form action="/trade" method="POST">
       <input type="text" name="stockName">
       <br>
@@ -12,5 +13,6 @@
       <input type="radio" name="transactionType" value="Sell" id="transactionType_Sell">
       <label for="transactionType_Sell">Sell</label>
     </form>
+    <a href="/?logout=true"><button>Logout</button></a>
   </body>
 {% endblock %}

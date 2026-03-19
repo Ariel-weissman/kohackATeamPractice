@@ -45,6 +45,9 @@ with app.app_context():
 
 @app.route('/')
 def main_page():
+    logout = request.args.get('logout')
+    if logout:
+        session.pop('user', None) # Log out the user by removing their ID from the session
     return render_template('index.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -54,29 +57,38 @@ def signup():
         p = request.form.get('password')
 
         existingUser = User.findByUsername(u)
-        if existingUser: # TODO: Find a way to tell user that username is taken 
+        if existingUser: # TODO: Find a way to tell user that username is taken
+            flash('Username is already taken.', 'error') 
             return render_template('signup.html')
-        elif p == '' or u == '': # TODO: Find a way to tell user that they need to fill out these inputs 
+        elif p == '' or u == '':
+            flash('Please fill out both username and password.', 'error')
             return render_template('signup.html')
 
         newUser = User(username=u, password=p)
         db.session.add(newUser)
         db.session.commit()
         session['user'] = newUser.id # Log in the user to flask via ID
-        return redirect('trade.html')
+        return redirect('/trade')
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        pass
+        username = request.form.get('username')
+        password = request.form.get('password')
+        user = User.findByUsername(username)
+        if user and user.password == password:
+            session['user'] = user.id # Log in the user to flask via ID
+            return redirect('/trade')
+        else:
+            flash('Invalid username or password.', 'error')
     return render_template('login.html')
 
 @app.route('/trade', methods=['GET', 'POST'])
 def trade():
     if request.method == 'POST':
         pass
-    return render_template('trade.html')
+    return render_template('trade.html', user=User.findByID(session['user']))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
